@@ -6,4 +6,4 @@ WORKDIR /app
 RUN pip install pip --upgrade
 RUN pip install -r requirements.txt
 ENTRYPOINT ["python"]
-CMD ["smtpchecker.py"]
+CMD ["server.py"]
