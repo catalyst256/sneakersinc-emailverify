@@ -1,16 +1,10 @@
 #!/usr/bin/env python
 
 from libs.mx import getrecords
-from libs.tor import usetor
 from libs.email import checkemail, findcatchall
 from flask_api import FlaskAPI
-import ConfigParser
 import validators
 from flask import request
-
-conf = ConfigParser.ConfigParser()
-conf.read("settings.conf")
-tor = int(conf.get('tor', 'enabled'))
 
 
 def verifyemail(email):
@@ -21,10 +15,7 @@ def verifyemail(email):
             fake = 'Yes'
         else:
             fake = 'No'
-        if tor == 1:
-            results = usetor(email, mx)
-        else:
-            results = checkemail(email, mx)
+        results = checkemail(email, mx)
         if results[0] == 666:
             return {'email': email, 'error': results[1], 'mx': mx, 'status': 'Error'}
         if results[0] == 250:
@@ -33,7 +24,7 @@ def verifyemail(email):
             status = 'Bad'
 
         data = {'email': email, 'mx': mx, 'code': results[0], 'message': results[1], 'status': status,
-                'catch_all': fake, 'tor_enabled': results[2]}
+                'catch_all': fake}
         return data
     else:
         return {'error': 'Error checking email address'}
@@ -42,9 +33,9 @@ def verifyemail(email):
 app = FlaskAPI(__name__)
 
 
-@app.route('/verify/', methods=['GET'])
+@app.route('/api/v1/verify/', methods=['GET'])
 def search():
-    addr = request.args.get('email')
+    addr = request.args.get('q')
     if not validators.email(addr):
         return {'Error': 'Invalid email address'}
     data = verifyemail(addr)
