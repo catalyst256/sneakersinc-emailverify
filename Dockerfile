@@ -1,9 +1,13 @@
-FROM ubuntu:latest
-RUN apt-get update
-RUN apt-get install -y build-essential python-dev python-pip
+# Use Alpine Linux as the base image
+FROM alpine:latest
+
+# Install Python3, pip3 and other dependencies
+RUN apk add --update python3 py3-pip py3-dnspython py3-pysocks py3-validators py3-flask py3-flask-restx
+
+# Copy the current directory contents into the container at /app
 COPY . /app
 WORKDIR /app
-RUN pip install pip --upgrade
-RUN pip install -r requirements.txt
-ENTRYPOINT ["python"]
+
+# Start the flask server
+ENTRYPOINT ["python3"]
 CMD ["server.py"]

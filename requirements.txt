@@ -1,5 +1,5 @@
 dnspython
 pysocks
 validators
-flask_api
 flask
+flask_restx
